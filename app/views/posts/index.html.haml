@@ -1,0 +1,41 @@
+%h1 Listing posts
+
+- if @category
+  %h3= @category.name + ' 카테고리 포스트를 보여줍니다.'
+
+.row
+  .col-sm-2.col-sm-offset-10
+    = form_tag posts_path(category: :category), method: "get" do
+      .field
+        = label_tag "Select Category"
+        - if @category
+          = select_tag :category, options_from_collection_for_select(Category.all, :id, :name, selected: @category.id), class: "form-control", onchange: "this.form.submit();", :prompt => "category"
+        - else
+          = select_tag :category, options_from_collection_for_select(Category.all, :id, :name), class: "form-control", onchange: "this.form.submit();", :prompt => "category"
+
+%table.table.table-hover
+  %thead.thead-dark
+    %tr
+      %th.col-xs-3{scope: "col"} Title
+      %th.col-xs-3{scope: "col"} Category
+      %th.col-xs-3{scope: "col"} User
+      %th.col-xs-3{scope: "col"} Edit/Destroy
+
+  %tbody
+    - @posts.each do |post|
+      %tr
+        %td.col-xs-3= link_to post.title, post
+        %td.col-xs-3= post.category.name
+        %td.col-xs-3= post.user.email if post.user_id?
+        %td.col-xs-3
+          = link_to 'Edit', edit_post_path(post), class: "btn btn-default" if can? :edit, post
+          = link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-default" if can? :edit, post
+
+%br
+
+- if user_signed_in?
+  = link_to 'New Post', new_post_path , class: "btn btn-default"
+- if @category
+  = link_to 'List All', posts_path, class: "btn btn-default"
+= link_to 'Home', root_path, class: "btn btn-default"
+

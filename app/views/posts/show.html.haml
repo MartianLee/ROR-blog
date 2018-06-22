@@ -1,0 +1,23 @@
+%p#notice= notice
+
+%p
+  %b Category:
+  = @post.category.name
+%p
+  %b Title:
+  = @post.title
+%p
+  %b Body:
+  = raw @post.body
+
+%p
+  %b Image:
+  = image_tag @post.featured_url(:thumb) if @post.featured?
+
+= link_to 'Edit', edit_post_path(@post), class: "btn btn-default"
+= link_to 'Back', posts_path, class: "btn btn-default"
+
+%p
+  %b
+    Comments
+    = render "comments", commentable: @post
